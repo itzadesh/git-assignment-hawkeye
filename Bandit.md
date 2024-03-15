@@ -5,7 +5,7 @@
 Key : ` bandit0 ` 
 
 
-### level 1
+### **level 1**
 
 Reading a file using cat command
 
