@@ -54,8 +54,12 @@ sign_gpg_key() {
     local USER_EMAIL=$(echo $USER_ID | awk -F ',' '{print $2}' | tr -d '<>')
     echo "------------------------------------------------------------"
     git config --global user.signingkey $GPG_Key
-    git config --global user.name $USER_NAME
-    git config --global user.email $USER_EMAIL
+    echo "Do you want to sign user and email also to global? (y/n)  "
+    read response
+    if [ "$response" = 'y' ]; then
+        git config --global user.name $USER_NAME
+        git config --global user.email $USER_EMAIL
+    fi
     git config --global commit.gpgsign true
     echo
     echo "Copy And Paste the following PGP Public Key Block in GitHub"
@@ -70,7 +74,24 @@ sign_gpg_key() {
 delete_previous_keys() {
     existing_keys
     echo "Enter index of key which you want to delete : "
-    read ID_index
+    length=${#keys_array[@]}
+    while true; do
+        read ID_index
+        found=0
+        for ((i = 1; i <= length; i++)); do
+            if [ "$i" -eq "$ID_index" ]; then
+                found=1
+                break
+            fi
+        done
+        if [ "$found" -eq 1 ]; then
+            break
+        fi
+
+        if [ "$found" -eq 0 ]; then
+            echo "Enter valid choice"
+        fi
+    done
     gpg --delete-secret-key ${keys_array[$((ID_index - 1))]}
     gpg --delete-key ${keys_array[$((ID_index - 1))]}
     read_keys
