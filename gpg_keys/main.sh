@@ -4,6 +4,9 @@ source banner.sh
 source gpg_manager.sh
 
 
+
+
+
 # Main function
 gpg_state=0
 
@@ -15,6 +18,8 @@ else
     exit
 fi
 
+
+
 main() {
     while true; do
         display_banner
@@ -23,10 +28,13 @@ main() {
             1) create_gpg_keys ;;
             2) 
             echo "Signing GPG key to Git and GitHub..."
-            echo "Enter the key ID which you want to sign:"
-            read GPG_KEY_ID
-            sign_gpg_key GPG_KEY_ID;;
+            existing_keys
+            echo  -n "Enter the index of key which you want to sign: "
+            read GPG_KEY_INDEX
+            sign_gpg_key ${keys_array[GPG_KEY_INDEX-1]} ${keys_users[GPG_KEY_INDEX-1]};;
             3) delete_previous_keys ;;
+            4) current_status ;;
+            5) existing_keys ;;
             0) echo "Exiting... Thanks for using the gpg key manager"; exit ;;
             *) echo "Invalid choice. Please try again." ;;
         esac
@@ -34,4 +42,5 @@ main() {
 }
 
 # Start the script
+read_keys
 main
